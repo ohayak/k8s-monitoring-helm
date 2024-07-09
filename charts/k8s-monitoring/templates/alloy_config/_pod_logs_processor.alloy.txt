@@ -13,6 +13,10 @@ import.string "{{ .name  }}" {
 import.string "{{ .name  }}" {
   content = remote.kubernetes.configmap.modules.data[{{ .file | quote }}]
 }
+
+{{ .name  }}.logs {{ .name | quote }} {
+  forward_to = [loki.process.logs_service.receiver]
+}
 {{- end }}
 
 loki.process "pod_logs" {
