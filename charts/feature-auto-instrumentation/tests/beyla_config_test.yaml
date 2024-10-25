@@ -1,0 +1,89 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test Beyla config values
+templates:
+  - beyla-config.yaml
+tests:
+  - it: creates a ConfigMap for Beyla
+    set:
+      deployAsConfigMap: true
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: data["beyla-config.yml"]
+          value: |-
+            attributes:
+              kubernetes:
+                enable: true
+              select:
+                beyla_network_flow_bytes:
+                  include:
+                  - k8s.src.owner.type
+                  - k8s.dst.owner.type
+                  - direction
+            discovery:
+              services:
+              - k8s_namespace: .
+            filter:
+              network:
+                k8s_dst_owner_name:
+                  not_match: '{kube*,*jaeger-agent*,*prometheus*,*promtail*,*grafana-agent*}'
+                k8s_src_owner_name:
+                  not_match: '{kube*,*jaeger-agent*,*prometheus*,*promtail*,*grafana-agent*}'
+            internal_metrics:
+              prometheus:
+                path: /internal/metrics
+                port: 9090
+            prometheus_export:
+              features:
+              - application
+              - network
+              - application_service_graph
+              - application_span
+              path: /metrics
+              port: 9090
+
+  - it: sets the otel_traces_export endpoint if provided
+    set:
+      deployAsConfigMap: true
+      beyla:
+        traces:
+          endpoint: http://alloy-receiver.default.svc.cluster.local:4318
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: data["beyla-config.yml"]
+          value: |-
+            attributes:
+              kubernetes:
+                enable: true
+              select:
+                beyla_network_flow_bytes:
+                  include:
+                  - k8s.src.owner.type
+                  - k8s.dst.owner.type
+                  - direction
+            discovery:
+              services:
+              - k8s_namespace: .
+            filter:
+              network:
+                k8s_dst_owner_name:
+                  not_match: '{kube*,*jaeger-agent*,*prometheus*,*promtail*,*grafana-agent*}'
+                k8s_src_owner_name:
+                  not_match: '{kube*,*jaeger-agent*,*prometheus*,*promtail*,*grafana-agent*}'
+            internal_metrics:
+              prometheus:
+                path: /internal/metrics
+                port: 9090
+            otel_traces_export:
+              endpoint: http://alloy-receiver.default.svc.cluster.local:4318
+            prometheus_export:
+              features:
+              - application
+              - network
+              - application_service_graph
+              - application_span
+              path: /metrics
+              port: 9090

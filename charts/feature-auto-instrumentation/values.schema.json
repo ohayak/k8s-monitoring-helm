@@ -1,0 +1,140 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "beyla": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "properties": {
+                        "create": {
+                            "type": "boolean"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "kubernetes": {
+                                            "type": "object",
+                                            "properties": {
+                                                "enable": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "internal_metrics": {
+                                    "type": "object",
+                                    "properties": {
+                                        "prometheus": {
+                                            "type": "object",
+                                            "properties": {
+                                                "path": {
+                                                    "type": "string"
+                                                },
+                                                "port": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "prometheus_export": {
+                                    "type": "object",
+                                    "properties": {
+                                        "features": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "path": {
+                                            "type": "string"
+                                        },
+                                        "port": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "skipConfigMapCheck": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "extraDiscoveryRules": {
+                    "type": "string"
+                },
+                "extraMetricProcessingRules": {
+                    "type": "string"
+                },
+                "labelMatchers": {
+                    "type": "object",
+                    "properties": {
+                        "app.kubernetes.io/name": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "maxCacheSize": {
+                    "type": "null"
+                },
+                "metricsTuning": {
+                    "type": "object",
+                    "properties": {
+                        "excludeMetrics": {
+                            "type": "array"
+                        },
+                        "includeMetrics": {
+                            "type": "array"
+                        }
+                    }
+                },
+                "podAnnotations": {
+                    "type": "object",
+                    "properties": {
+                        "k8s.grafana.com/logs.job": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "scrapeInterval": {
+                    "type": "string"
+                },
+                "traces": {
+                    "type": "object",
+                    "properties": {
+                        "endpoint": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "deployAsConfigMap": {
+            "type": "boolean"
+        },
+        "fullnameOverride": {
+            "type": "string"
+        },
+        "global": {
+            "type": "object",
+            "properties": {
+                "maxCacheSize": {
+                    "type": "integer"
+                },
+                "scrapeInterval": {
+                    "type": "string"
+                }
+            }
+        },
+        "nameOverride": {
+            "type": "string"
+        }
+    }
+}

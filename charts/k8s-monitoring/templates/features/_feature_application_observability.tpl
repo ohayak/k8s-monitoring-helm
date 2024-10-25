@@ -47,16 +47,18 @@ application_observability "feature" {
 {{- $traceDestinations := include "destinations.get" (dict "destinations" $.Values.destinations "type" "traces" "ecosystem" "otlp" "filter" $.Values.applicationObservability.destinations) | fromYamlArray -}}
 {{- include "destinations.validate_destination_list" (dict "destinations" $traceDestinations "type" "traces" "ecosystem" "otlp" "feature" $featureName) }}
 
-{{- include "collectors.require_collector" (dict "Values" $.Values "name" "alloy-receiver" "feature" $featureName) }}
-{{- if $.Values.applicationObservability.receivers.grpc.enabled }}
-  {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" "alloy-receiver" "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.grpc.port "portName" "otlp-grpc" "portProtocol" "TCP") }}
+{{- range $collector := include "features.applicationObservability.collectors" . | fromYamlArray }}
+  {{- include "collectors.require_collector" (dict "Values" $.Values "name" $collector "feature" $featureName) }}
+  {{- if $.Values.applicationObservability.receivers.grpc.enabled }}
+    {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" $collector "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.grpc.port "portName" "otlp-grpc" "portProtocol" "TCP") }}
+  {{- end -}}
+  {{- if $.Values.applicationObservability.receivers.http.enabled }}
+    {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" $collector "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.http.port "portName" "otlp-http" "portProtocol" "TCP") }}
+  {{- end -}}
+  {{- if $.Values.applicationObservability.receivers.zipkin.enabled }}
+    {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" $collector "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.zipkin.port "portName" "zipkin" "portProtocol" "TCP") }}
+  {{- end -}}
+  {{- include "feature.applicationObservability.validate" (dict "Values" $.Values.applicationObservability) }}
 {{- end -}}
-{{- if $.Values.applicationObservability.receivers.http.enabled }}
-  {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" "alloy-receiver" "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.http.port "portName" "otlp-http" "portProtocol" "TCP") }}
-{{- end -}}
-{{- if $.Values.applicationObservability.receivers.zipkin.enabled }}
-  {{- include "collectors.require_extra_port" (dict "Values" $.Values "name" "alloy-receiver" "feature" $featureName "portNumber" $.Values.applicationObservability.receivers.zipkin.port "portName" "zipkin" "portProtocol" "TCP") }}
-{{- end -}}
-{{- include "feature.applicationObservability.validate" (dict "Values" $.Values.applicationObservability) }}
 {{- end -}}
 {{- end -}}
